@@ -77,14 +77,14 @@ public class SkeletonAnimation {
 	public void runAnimation(boolean flip) {
 		spriteBatch.begin();
 		TextureRegion currentFrame = run.getKeyFrame(stateTime, true);
-		spriteBatch.draw(currentFrame, flip ? x + currentFrame.getRegionWidth() : x, y, 0, 0, flip ? -currentFrame.getRegionWidth() : currentFrame.getRegionWidth(), currentFrame.getRegionHeight(), scale, scale, 0);
+		spriteBatch.draw(currentFrame, x, y, flip ? currentFrame.getRegionWidth() : 0, 0, currentFrame.getRegionWidth(), currentFrame.getRegionHeight(), flip ? -scale : scale, scale, 0);
 		spriteBatch.end();
 	}
 
 	public void jumpAnimation(boolean flip) {
 		spriteBatch.begin();
 		TextureRegion currentFrame = jump.getKeyFrame(stateTime, true);
-		spriteBatch.draw(currentFrame, flip ? x + currentFrame.getRegionWidth() : x, y + 50, 0, 0, flip ? -currentFrame.getRegionWidth() : currentFrame.getRegionWidth(), currentFrame.getRegionHeight(), scale, scale, 0);
+		spriteBatch.draw(currentFrame, x, y, flip ? currentFrame.getRegionWidth() : 0, 0, currentFrame.getRegionWidth(), currentFrame.getRegionHeight(), flip ? -scale : scale, scale, 0);
 		spriteBatch.end();
 	}
 

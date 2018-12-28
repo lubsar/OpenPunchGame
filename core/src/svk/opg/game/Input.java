@@ -101,7 +101,7 @@ public class Input implements InputProcessor {
     public void update(boolean debug) {
 
         if (space) {
-            skeletonAnimation.jumpAnimation(true);
+            skeletonAnimation.jumpAnimation(left);
         } else if (left && !space) {
             skeleton.translateX(-speed * Gdx.graphics.getDeltaTime());
             skeletonAnimation.runAnimation(true);
