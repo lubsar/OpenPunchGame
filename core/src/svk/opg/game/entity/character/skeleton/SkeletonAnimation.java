@@ -1,108 +1,111 @@
+
+/*
+ * Created by Lukas Papik
+ * 28.12.18 17:49.
+ */
+
+/*
+ * Created by Lukas Papik
+ * 28.12.18 17:49.
+ */
+
+/*
+ * Created by Lukas Papik
+ * 28.12.18 13:00.
+ */
+
 package svk.opg.game.entity.character.skeleton;
 
-import java.util.Map.Entry;
-import java.util.TreeMap;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class SkeletonAnimation {
-	private int step = 0;
-	private float delta;
-	private Skeleton skeleton;
-	
-	public TreeMap<Integer, Pose> poses;
-	
-	private boolean running;
-	private float[] anglesBuffer;
-	
-	private Pose prev;
-	private Pose next;
-	
-	public SkeletonAnimation(Skeleton skeleton) {
-		this.skeleton = skeleton;
-		poses = new TreeMap<Integer, Pose>();
+	private int frameCols, frameRows;
+
+	private Animation<TextureRegion> run;
+	private Animation<TextureRegion> jump;
+	private Animation<TextureRegion> idle;
+
+	private Texture sheet;
+	private SpriteBatch spriteBatch;
+	private TextureRegion[][] textureRegions;
+	private float stateTime;
+	private float scale = 1;
+
+	private int x;
+	private int y;
+
+	public SkeletonAnimation() {
+		this.sheet = new Texture(Gdx.files.internal("resources/characters/player-spritemap-v9.png"));
+		textureRegions = TextureRegion.split(sheet,
+				sheet.getWidth() / 8,
+				sheet.getHeight() / 4);
+
+		run = new Animation<TextureRegion>(0.085f, animation(4, 8));
+		jump = new Animation<TextureRegion>(0.085f, animation(4, 8));
+		idle = new Animation<TextureRegion>(0.085f, animation(4, 8));
+
+		spriteBatch = new SpriteBatch();
+		stateTime = 0f;
 	}
-	
-	public void stop() {
-		running = false;
+
+	public SkeletonAnimation(Texture spritemap, int spriteCols, int spriteRows, int iR, int iC, int wR, int wC, float duration, float scale) {
+		this.sheet = spritemap;
+		this.frameCols = spriteCols;
+		this.frameRows = spriteRows;
+		this.scale = scale;
+
+		textureRegions = TextureRegion.split(sheet,
+				sheet.getWidth() / frameCols,
+				sheet.getHeight() / frameRows);
+
+		run = new Animation<TextureRegion>(duration, animation(wR, wC));
+		jump = new Animation<TextureRegion>(duration * 2, animation(iR, iC));
+		idle = new Animation<TextureRegion>(0.08f, animation(1, 1));
+
+		spriteBatch = new SpriteBatch();
+		stateTime = 0f;
 	}
-	
-	public void start() {
-		prev = poses.firstEntry().getValue();
-		
-		anglesBuffer = new float[prev.angles.length];
-		
-		next = getNext(step);
-		if(next == null) {
-			running = false;
-			return;
+
+	public void update(int x, int y) {
+		this.x = x;
+		this.y = y;
+		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
+		stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
+		//runAnimation(false);
+	}
+
+	public TextureRegion[] animation(int r, int c) {
+		TextureRegion[] animation = new TextureRegion[1 * c];
+		for (int i = 0; i < c; i++) {
+			animation[i] = textureRegions[r - 1][i];
 		}
-		
-		running = true;
+		return animation;
 	}
-	
-	public void setStep(int step) {
-		this.step = step;
+
+	public void runAnimation(boolean flip) {
+		spriteBatch.begin();
+		TextureRegion currentFrame = run.getKeyFrame(stateTime, true);
+		spriteBatch.draw(currentFrame, flip ? x + currentFrame.getRegionWidth() : x, y, 0, 0, flip ? -currentFrame.getRegionWidth() : currentFrame.getRegionWidth(), currentFrame.getRegionHeight(), scale, scale, 0);
+		spriteBatch.end();
 	}
-	
-	public void tick(double deltaTime) {
-		if(!running) {
-			return;
-		}
-		
-		if(step >= next.step) {
-			prev = next;
-			next = getNext(step);
-			
-			if(next == null) {
-				next = prev;
-			}
-		}
-		
-		if(next == prev) {
-			running = false;
-			
-			for(int i = 0; i < prev.angles.length; i++) {
-				anglesBuffer[i] = prev.angles[i];
-			}
-			
-		} else {
-			for(int i = 0; i < prev.angles.length; i++) {
-				float preva = prev.angles[i];
-				float nexta = next.angles[i];
-			
-				delta = ((float)(nexta - preva) / (next.step - prev.step));
-				
-				anglesBuffer[i] =  preva + ((float)(nexta - preva) / (next.step - prev.step)) * (step - prev.step +1);
-			}
-		}
-		
-		skeleton.setRotations(anglesBuffer);
-		step += deltaTime;
+
+	public void jumpAnimation(boolean flip) {
+		spriteBatch.begin();
+		TextureRegion currentFrame = jump.getKeyFrame(stateTime, true);
+		spriteBatch.draw(currentFrame, flip ? x + currentFrame.getRegionWidth() : x, y + 50, 0, 0, flip ? -currentFrame.getRegionWidth() : currentFrame.getRegionWidth(), currentFrame.getRegionHeight(), scale, scale, 0);
+		spriteBatch.end();
 	}
-	
-	private Pose getNext(int step) {
-		Entry<Integer, Pose> entry = poses.higherEntry(step);
-		if(entry == null) {
-			return null;
-		} else {
-			return entry.getValue();			
-		}
+
+	public void idleAnimation() {
+		spriteBatch.begin();
+		TextureRegion currentFrame = idle.getKeyFrame(stateTime, true);
+		spriteBatch.draw(currentFrame, x, y, 0, 0, currentFrame.getRegionWidth(), currentFrame.getRegionHeight(), scale, scale, 0);
+		spriteBatch.end();
 	}
-	
-	public Pose getPrev(int step) {
-		return poses.lowerEntry(step).getValue();
-	}
-	
-	public boolean isRunning() {
-		return running;
-	}
-	
-	public static class Pose {
-		public float[] angles;
-		public int step;
-		
-		public Pose(int step, float[] angles) {
-			this.step = step;
-			this.angles = angles;
-		}
-	}
+
+
 }
