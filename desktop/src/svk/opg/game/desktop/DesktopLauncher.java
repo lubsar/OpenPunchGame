@@ -3,7 +3,7 @@ package svk.opg.game.desktop;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-import svk.opb.game.Game;
+import svk.opg.game.Game;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {

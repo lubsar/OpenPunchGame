@@ -1,28 +1,17 @@
-
-/*
- * Created by Lukas Papik
- * 28.12.18 17:49.
- */
-
-/*
- * Created by Lukas Papik
- * 28.12.18 17:49.
- */
-
-/*
- * Created by Lukas Papik
- * 28.12.18 13:01.
- */
-
-package svk.opg.game.entity.character.skeleton;
+package svk.opg.game.character.sprite.skeleton;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import svk.opb.game.Input;
+
+import svk.opg.game.Input;
 import svk.opg.game.object.GameObject;
 
+/**
+ * @author Lukas Papik
+ *
+ */
 public class Skeleton extends GameObject {
 
 	public Sprite sprite;
