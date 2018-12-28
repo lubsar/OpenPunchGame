@@ -1,4 +1,8 @@
-## Assets
+## Test packages
+/core/src/svk/opg/game/test
+
+## Test assets
+/core/assets/test
 
 ## Java
 

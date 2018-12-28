@@ -1,27 +1,17 @@
-/*
- * Created by Lukas Papik
- * 28.12.18 17:49.
- */
-
-/*
- * Created by Lukas Papik
- * 28.12.18 17:49.
- */
-
-/*
- * Created by Lukas Papik
- * 28.12.18 15:47.
- */
-
-package svk.opb.game;
+package svk.opg.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import svk.opg.game.entity.character.skeleton.SkeletonAnimation;
 
+import svk.opg.game.character.sprite.skeleton.SkeletonAnimation;
+
+/**
+ * @author Lukas Papik
+ *
+ */
 public class Input implements InputProcessor {
 
     boolean space = false;

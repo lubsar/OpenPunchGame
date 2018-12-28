@@ -1,20 +1,4 @@
-
-/*
- * Created by Lukas Papik
- * 28.12.18 17:49.
- */
-
-/*
- * Created by Lukas Papik
- * 28.12.18 17:49.
- */
-
-/*
- * Created by Lukas Papik
- * 28.12.18 13:00.
- */
-
-package svk.opg.game.entity.character.skeleton;
+package svk.opg.game.character.sprite.skeleton;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -22,6 +6,10 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+/**
+ * @author Lukas Papik
+ *
+ */
 public class SkeletonAnimation {
 	private int frameCols, frameRows;
 

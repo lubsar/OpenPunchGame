@@ -1,17 +1,11 @@
-/*
- * Created by Lukas Papik
- * 28.12.18 17:49.
- */
-
-/*
- * Created by Lukas Papik
- * 28.12.18 17:49.
- */
-
 package svk.opg.game.object;
 
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * @author Lubomir Hlavko, Lukas Papik
+ *
+ */
 public abstract class GameObject {
     protected Vector2 position;
     protected Vector2 velocity;
@@ -48,7 +42,6 @@ public abstract class GameObject {
         position.x = x;
         position.y = y;
     }
-
 
     public Vector2 getposition() {
         return new Vector2(position.x, position.y);
