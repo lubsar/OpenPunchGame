@@ -3,19 +3,23 @@ package svk.opg.game.character.skeletal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 import svk.opg.game.object.GameObject;
 
 /**
  * @author Lubomir Hlavko
- *
  */
 public class Skelet extends GameObject {
 	private Bone root;
 	
 	public List<Bone> bones = new ArrayList<Bone>();
+	public List<BoneTextureData> boneTextures = new ArrayList<BoneTextureData>();
 	
+	/**
+	 * Constructor initializes the root bone.
+	 */
 	public Skelet() {
 		super();
 		root = new Bone();
@@ -24,6 +28,12 @@ public class Skelet extends GameObject {
 		bones.add(root);
 	}
 	
+	/**
+	 * Creates and connects new bone to bone at parrentBoneIndex in the {@link #bones}.
+	 * @param parrentBoneIndex index in {@link #bones} to which will be new bone connected
+	 * @param length length of the new bone
+	 * @param angle angle between parent bone and new bone
+	 */
 	public int addBone(int parrentBoneIndex, float length, float angle) {
 		Bone bone = new Bone();
 		Bone parrent = bones.get(parrentBoneIndex);
@@ -39,19 +49,8 @@ public class Skelet extends GameObject {
 		return bones.size() -1;
 	}
 	
-	public int addNode(Bone node, int parrentIndex) {
-		Bone parrent = bones.get(parrentIndex);
-	
-		node.parrent = parrent;
-		node.updatePosition();
-		
-		bones.add(node);
-		int index = bones.size() -1;
-		bones.addAll(node.children);
-		
-		parrent.children.add(node);
-		
-		return index;
+	public void addTexture(BoneTextureData data) {
+		boneTextures.add(data);
 	}
 	
 	public Bone getBone(int index) {
@@ -76,7 +75,7 @@ public class Skelet extends GameObject {
 //		}
 	}
 	
-	private void updateState() {
+	protected void updateState() {
 		root.updatePosition();
 	}
 	
@@ -124,13 +123,6 @@ public class Skelet extends GameObject {
 		updateState();
 	}
 	
-	public void rotate(float angleDeg) {
-		for(Bone node : bones) {
-			node.angleDeg += angleDeg;
-		}
-		updateState();
-	}
-	
 	public void rotateAroundParrent(int nodeIndex, float angle, boolean lockother) {
 		Bone node = bones.get(nodeIndex);
 		if(node.parrent == null) {
@@ -139,24 +131,20 @@ public class Skelet extends GameObject {
 		node.rotateArroundParrent(angle, lockother);
 	}
 	
-	public void rotateChildren(int nodeIndex, float angle, boolean lockother) {
-		bones.get(nodeIndex).rotateChildren(angle, lockother);
-	}
-	
-	public void setRotation(int nodeIndex, float angle) {
-		Bone node = bones.get(nodeIndex);
+	public void setBoneAngle(int boneIndex, float angle) {
+		Bone node = bones.get(boneIndex);
 		node.angleDeg = angle;
 		node.updatePosition();
 	}
 	
-	public void setRotations(float angles[]) {
+	public void setBoneAngles(float angles[]) {
 		for(int i = 0; i < bones.size(); i++) {
 			bones.get(i).angleDeg = angles[i];
 		}
 		
 		updateState();
 	}
-	
+		
 	public static class Bone {
 		public Vector2 position;
 		
@@ -206,6 +194,66 @@ public class Skelet extends GameObject {
 			for(Bone child : children) {
 				child.rotateArroundParrent(angle, lockother);
 			}
+		}
+		
+		public void rotateParrentAround(float angle) {
+			if(parrent == null) {
+				System.out.println("no parrent to rotate");
+				return;
+			}
+			
+			Bone bone = this;
+			Vector2 trans = null;
+			while(bone.parrent != null) {
+				bone.angleDeg += angle;
+				
+				Vector2 old = new Vector2(bone.parrent.position);
+				if(trans != null) {
+					bone.parrent.position.add(trans);
+				}
+				
+				bone.parrent.position.rotateAround(bone.position, angle);
+				
+				for(Bone child : bone.parrent.children) {
+					if(child != bone) {
+						child.rotateArroundParrent(angle, true);					
+					}
+				}
+				trans = new Vector2(bone.parrent.position).sub(old);
+				
+				bone = bone.parrent;
+			}
+			
+			bone.updatePosition();
+		}
+	}
+	
+	public static class BoneTextureData {
+		public int boneIndex;
+		
+		public Sprite sprite;
+		
+		public int xMappingOffset;
+		public int yMappingOffset;
+		
+		public float angleOffset;
+		public boolean flip;
+		
+		public BoneTextureData(int boneIndex, Sprite sprite, int xMappingOffset, int yMappingOffset, boolean flip) {
+			this.boneIndex = boneIndex;
+			this.sprite = sprite;
+			this.xMappingOffset = xMappingOffset;
+			this.yMappingOffset = yMappingOffset;
+			this.flip = flip;
+		}
+		
+		public BoneTextureData(int boneIndex, Sprite sprite, int xMappingOffset, int yMappingOffset, boolean flip, float angleOffset) {
+			this.boneIndex = boneIndex;
+			this.sprite = sprite;
+			this.xMappingOffset = xMappingOffset;
+			this.yMappingOffset = yMappingOffset;
+			this.flip = flip;
+			this.angleOffset = angleOffset;
 		}
 	}
 }

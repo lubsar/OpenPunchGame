@@ -79,7 +79,7 @@ public class SkelalAnimation {
 			}
 		}
 		
-		skeleton.setRotations(anglesBuffer);
+		skeleton.setBoneAngles(anglesBuffer);
 		step += deltaTime;
 	}
 	

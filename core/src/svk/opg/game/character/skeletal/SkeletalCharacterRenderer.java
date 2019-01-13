@@ -18,10 +18,15 @@ public class SkeletalCharacterRenderer {
 	
 	public void render(Skelet skeleton) {
 		renderer.begin(ShapeRenderer.ShapeType.Filled);
-		renderer.setColor(Color.WHITE);
 		for(Skelet.Bone b:skeleton.bones) {
 			if(b.parrent != null) {
+				renderer.setColor(Color.BLACK);
 				renderer.rectLine(b.position, b.parrent.position, LINE_WIDTH);
+			}
+			
+			if(b.parrent == null) {
+				renderer.setColor(Color.RED);
+				renderer.circle(b.position.x, b.position.y, 4);
 			}
 		}
 		
