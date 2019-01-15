@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 
 import svk.opg.game.character.skeletal.Bone;
 import svk.opg.game.character.skeletal.BoneTextureData;
+import svk.opg.game.character.skeletal.Skelet;
 
 public class SkeletSerializable {
 	public Array<BoneSerializable> bones;
@@ -12,29 +13,31 @@ public class SkeletSerializable {
 	
 	public SkeletSerializable(){}
 	
-	public SkeletSerializable(Array<Bone> bones, Array<BoneTextureData> boneTextures) {
-		this.bones = new Array<BoneSerializable>(bones.size);
-		this.boneTextures = new Array<BoneTextureDataSerializable>(boneTextures.size);
+	public SkeletSerializable(Skelet skeleton) {
+		this.bones = new Array<BoneSerializable>(skeleton.bones.size);
+		this.boneTextures = new Array<BoneTextureDataSerializable>(skeleton.boneTextures.size);
 		
-		for(int i = 1; i < bones.size; i++) {
-			Bone b = bones.get(i);
-			this.bones.add(new BoneSerializable(bones.indexOf(b.parrent, true), b.length, b.angleDeg));
+		for(int i = 1; i < skeleton.bones.size; i++) {
+			Bone b = skeleton.bones.get(i);
+			this.bones.add(new BoneSerializable(skeleton.bones.indexOf(b.parrent, true), skeleton.getBoneId(i), b.length, b.angleDeg));
 		}
 		
-		for(BoneTextureData text: boneTextures) {
+		for(BoneTextureData text: skeleton.boneTextures) {
 			this.boneTextures.add(new BoneTextureDataSerializable(text.boneIndex, text.orderIndex, String.format("textures/%d.png", text.boneIndex), text.xMappingOffset, text.yMappingOffset, text.angleOffset, text.flip));
 		}
 	}
 	
 	public static class BoneSerializable {	
 		public int parrentIndex;
+		public String boneId = null;
 		public float length = 0.0f;
 		public float angleDeg = 0.0f;
 		
 		public BoneSerializable(){}
 		
-		public BoneSerializable(int parrentIndex, float length, float angleDeg) {
+		public BoneSerializable(int parrentIndex, String boneId, float length, float angleDeg) {
 			this.parrentIndex = parrentIndex;
+			this.boneId = boneId;
 			this.length = length;
 			this.angleDeg = angleDeg;
 		}

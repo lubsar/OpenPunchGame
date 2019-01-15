@@ -2,6 +2,7 @@ package svk.opg.game.character.skeletal;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 
 import svk.opg.game.object.GameObject;
 
@@ -11,30 +12,27 @@ import svk.opg.game.object.GameObject;
 public class Skelet extends GameObject {
 	private Bone root;
 	
-	//TODO change to arrays ?
-	public Array<Bone> bones = new Array<Bone>();
+	//TODO change to java arrays ?
+	public Array<Bone> bones;	
+	public ObjectMap<String, Integer> boneIds;
 	
-	public Array<BoneTextureData> boneTextures = new Array<BoneTextureData>();
+	public Array<BoneTextureData> boneTextures;
 	protected int[] textureOrderBuffer = null; 
-	
-	/**
-	 * Constructor initializes the root bone.
-	 */
+
 	public Skelet() {
 		super();
+		
+		bones = new Array<Bone>();
+		boneIds = new ObjectMap<String, Integer>();
+		boneTextures = new Array<BoneTextureData>();
+		
 		root = new Bone();
 		root.position = this.position;
 		root.angleDeg = 0;
 		bones.add(root);
 	}
 	
-	/**
-	 * Creates and connects new bone to bone at parrentBoneIndex in the {@link #bones}.
-	 * @param parrentBoneIndex index in {@link #bones} to which will be new bone connected
-	 * @param length length of the new bone
-	 * @param angle angle between parent bone and new bone
-	 */
-	public int addBone(int parrentBoneIndex, float length, float angle) {
+	public int addBone(int parrentBoneIndex, float length, float angle, String boneid) {
 		Bone bone = new Bone();
 		Bone parrent = bones.get(parrentBoneIndex);
 		
@@ -44,37 +42,44 @@ public class Skelet extends GameObject {
 		bone.updatePosition();
 		
 		bones.add(bone);
+		
 		parrent.children.add(bone);
 		
+		if(boneid != null) {
+			boneIds.put(boneid, bones.size - 1);
+		}
+		
 		return bones.size -1;
+	}
+	
+	public Bone getBone(int index) {
+		return bones.get(index);
+	}
+	
+	public void addBoneIdentification(String id, int boneIndex) {
+		//TODO handle case when id is already assigned
+		boneIds.put(id, boneIndex);
+	}
+	
+	public int getBoneIndex(String id) {
+		if(boneIds.containsKey(id)) {
+			return boneIds.get(id);
+		} else {
+			return -1;
+		}
+	}
+	
+	public String getBoneId(int boneIndex) {
+		return boneIds.findKey(boneIndex, true);
 	}
 	
 	public void addTexture(BoneTextureData data) {
 		boneTextures.add(data);
 	}
 	
-	public Bone getBone(int index) {
-		return bones.get(index);
-	}
-		
 	@Override
 	public void update() {
 		updateState();
-		
-//		for(Bone node : bones){	
-//			if(node.parrent == null) {
-//				continue;
-//			}
-//			
-////			if(length != position.distance(parrent.position)) {
-////				Vec2f s = Vec2f.subtract(position, parrent.position);
-////				
-////				float t = (float) Math.sqrt(length * length / (s.x  * s.x + s.y * s.y));
-////				position.x = s.x * t + parrent.position.x; 
-////				position.y = s.y * t + parrent.position.y; 
-////			}
-////		
-//		}
 	}
 	
 	protected void updateState() {
