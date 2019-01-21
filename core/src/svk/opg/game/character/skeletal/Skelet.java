@@ -2,6 +2,8 @@ package svk.opg.game.character.skeletal;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectMap;
 
 import svk.opg.game.object.GameObject;
@@ -12,7 +14,7 @@ import svk.opg.game.object.GameObject;
 public class Skelet extends GameObject {
 	private Bone root;
 	
-	//TODO change to java arrays ?
+	//TODO change to standard arrays ?
 	public Array<Bone> bones;	
 	public ObjectMap<String, Integer> boneIds;
 	
@@ -137,10 +139,19 @@ public class Skelet extends GameObject {
 	
 	public void rotateAroundParrent(int nodeIndex, float angle, boolean lockother) {
 		Bone node = bones.get(nodeIndex);
+		//TODO reconsider
 		if(node.parrent == null) {
-			throw new RuntimeException("cant rotate master node around itself");
+			throw new RuntimeException("cant rotate root bone around itself");
 		}
 		node.rotateArroundParrent(angle, lockother);
+	}
+	
+	public void rotateParentArount(int nodeIndex, float angle) {
+		Bone node = bones.get(nodeIndex);
+		if(node.parrent == null) {
+			throw new RuntimeException("Bone does not have the parent");
+		}
+		node.rotateParrentAround(angle);
 	}
 	
 	public void setBoneAngle(int boneIndex, float angle) {
@@ -149,11 +160,17 @@ public class Skelet extends GameObject {
 		node.updatePosition();
 	}
 	
-	public void setBoneAngles(float angles[]) {
+	public void setPose(Pose pose) {
 		for(int i = 0; i < bones.size; i++) {
-			bones.get(i).angleDeg = angles[i];
+			bones.get(i).angleDeg = pose.angles[i];
 		}
 		
 		updateState();
+	}
+	
+	public void getPoseData(Pose pose) {
+		for(int i = 0; i < bones.size; i++) {
+			pose.angles[i] = bones.get(i).angleDeg;
+		}
 	}
 }

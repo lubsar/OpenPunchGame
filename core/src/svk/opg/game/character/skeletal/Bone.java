@@ -5,7 +5,10 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
-
+/**
+ * @author Lubomir Hlavko
+ *
+ */
 public class Bone {
 	public Vector2 position;
 	

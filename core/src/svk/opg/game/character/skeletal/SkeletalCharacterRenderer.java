@@ -25,6 +25,8 @@ public class SkeletalCharacterRenderer {
 			if(b.parrent != null) {
 				renderer.setColor(Color.BLACK);
 				renderer.rectLine(b.position, b.parrent.position, LINE_WIDTH);
+				renderer.setColor(Color.GREEN);
+				renderer.rect(b.position.x, b.position.y, 1,1);
 			}
 			
 			if(b.parrent == null) {
