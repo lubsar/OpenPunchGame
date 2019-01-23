@@ -3,6 +3,11 @@ package svk.opg.game.character.skeletal.animation;
 import svk.opg.game.character.skeletal.Pose;
 import svk.opg.game.character.skeletal.Skelet;
 
+
+/**
+ * @author Lubomir Hlavko
+ *
+ */
 public class LinearTransition {
 	public Skelet skeleton;
 
@@ -15,11 +20,11 @@ public class LinearTransition {
 	private Pose buffer;
 
 	public LinearTransition(Skelet skeleton) {
-			this.skeleton = skeleton;
-			
-			prev = new Pose("prev", skeleton);
-			buffer = new Pose("buffer", new float[skeleton.bones.size]);
-		}
+		this.skeleton = skeleton;
+
+		prev = new Pose("prev", skeleton);
+		buffer = new Pose("buffer", new float[skeleton.bones.size]);
+	}
 
 	public void stop() {
 		inProgress = false;
