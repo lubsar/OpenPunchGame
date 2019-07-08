@@ -3,7 +3,7 @@ package svk.opg.game.character.skeletal;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class BoneTextureData {
-	public int boneIndex;
+	public String boneName;
 	public int orderIndex;
 	
 	public Sprite sprite;
@@ -14,8 +14,8 @@ public class BoneTextureData {
 	public float angleOffset;
 	public boolean flip;
 	
-	public BoneTextureData(int boneIndex, Sprite sprite, int xMappingOffset, int yMappingOffset, int orderIndex, boolean flip) {
-		this.boneIndex = boneIndex;
+	public BoneTextureData(String boneIndex, Sprite sprite, int xMappingOffset, int yMappingOffset, int orderIndex, boolean flip) {
+		this.boneName = boneIndex;
 		this.sprite = sprite;
 		this.xMappingOffset = xMappingOffset;
 		this.yMappingOffset = yMappingOffset;
@@ -23,8 +23,8 @@ public class BoneTextureData {
 		this.flip = flip;
 	}
 	
-	public BoneTextureData(int boneIndex, Sprite sprite, int xMappingOffset, int yMappingOffset, int orderIndex, boolean flip, float angleOffset) {
-		this.boneIndex = boneIndex;
+	public BoneTextureData(String boneIndex, Sprite sprite, int xMappingOffset, int yMappingOffset, int orderIndex, boolean flip, float angleOffset) {
+		this.boneName = boneIndex;
 		this.sprite = sprite;
 		this.xMappingOffset = xMappingOffset;
 		this.yMappingOffset = yMappingOffset;

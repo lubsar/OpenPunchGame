@@ -16,7 +16,7 @@ import svk.opg.game.character.skeletal.Skelet;
  * @author Lubomir Hlavko
  *
  */
-public class SkeletIO {
+public class SkeletLegacyIO {
 	public static void serializeSkelet(FileHandle file, Skelet skeleton) {
 		SkeletSerializable toSerialize = new SkeletSerializable(skeleton);
 		Json js = new Json();
@@ -38,11 +38,11 @@ public class SkeletIO {
 		Skelet result = new Skelet();
 		
 		for(SkeletSerializable.BoneSerializable bone : serializable.bones) {
-			result.addBone(bone.name, bone.parentName, bone.length, bone.angleDeg);
+			result.addBone(bone.boneId,result.getBoneName(bone.parrentIndex), bone.length, bone.angleDeg);
 		}
 		
 		for(SkeletSerializable.BoneTextureDataSerializable text : serializable.boneTextures) {
-			result.addTexture(new BoneTextureData(text.boneName, new Sprite(new Texture(file.parent().child(text.spritePath))), text.xMappingOffset, text.yMappingOffset, text.orderIndex, text.flip, text.angleOffset));
+			result.addTexture(new BoneTextureData(result.getBoneName(text.boneIndex), new Sprite(new Texture(file.parent().child(text.spritePath))), text.xMappingOffset, text.yMappingOffset, text.orderIndex, text.flip, text.angleOffset));
 		}
 		
 		return result;
@@ -60,33 +60,32 @@ public class SkeletIO {
 			
 			for(int i = 1; i < skeleton.bones.size; i++) {
 				Bone b = skeleton.bones.get(i);
-				System.out.println(b.getName());
-				this.bones.add(new BoneSerializable(b.getName(), b.parrent.getName(), b.getLength(), b.getAngle()));
+				this.bones.add(new BoneSerializable(skeleton.bones.indexOf(b.parrent, true), skeleton.getBoneName(i), b.getLength(), b.getAngle()));
 			}
 			
 			for(BoneTextureData text: skeleton.boneTextures) {
-				this.boneTextures.add(new BoneTextureDataSerializable(text.boneName, text.orderIndex, String.format("textures/%d.png", text.orderIndex), text.xMappingOffset, text.yMappingOffset, text.angleOffset, text.flip));
+				this.boneTextures.add(new BoneTextureDataSerializable(skeleton.getBoneIndex(text.boneName), text.orderIndex, String.format("textures/%d.png", skeleton.getBoneIndex(text.boneName)), text.xMappingOffset, text.yMappingOffset, text.angleOffset, text.flip));
 			}
 		}
 		
 		public static class BoneSerializable {	
-			public String name = null;
-			public String parentName = null;
+			public int parrentIndex;
+			public String boneId = null;
 			public float length = 0.0f;
 			public float angleDeg = 0.0f;
 			
 			public BoneSerializable(){}
 			
-			public BoneSerializable(String name, String parentName, float length, float angleDeg) {
-				this.name = name;
-				this.parentName = parentName;
+			public BoneSerializable(int parrentIndex, String boneId, float length, float angleDeg) {
+				this.parrentIndex = parrentIndex;
+				this.boneId = boneId;
 				this.length = length;
 				this.angleDeg = angleDeg;
 			}
 		}
 		
 		public static class BoneTextureDataSerializable {
-			public String boneName;
+			public int boneIndex;
 			public int orderIndex;
 			
 			public String spritePath;
@@ -99,9 +98,9 @@ public class SkeletIO {
 			
 			public BoneTextureDataSerializable() {}
 			
-			public BoneTextureDataSerializable(String boneName, int orderIndex, String spritePath, int xMappingOffset,
+			public BoneTextureDataSerializable(int boneIndex, int orderIndex, String spritePath, int xMappingOffset,
 					int yMappingOffset, float angleOffset, boolean flip) {
-				this.boneName = boneName;
+				this.boneIndex = boneIndex;
 				this.orderIndex = orderIndex;
 				this.spritePath = spritePath;
 				this.xMappingOffset = xMappingOffset;

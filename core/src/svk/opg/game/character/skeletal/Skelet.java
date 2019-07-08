@@ -14,7 +14,7 @@ public class Skelet extends GameObject {
 	
 	//TODO change to standard arrays ?
 	public Array<Bone> bones;	
-	public ObjectMap<String, Integer> boneIds;
+	private ObjectMap<String, Integer> boneIds;
 	
 	public Array<BoneTextureData> boneTextures;
 	protected int[] textureOrderBuffer = null; 
@@ -26,39 +26,33 @@ public class Skelet extends GameObject {
 		boneIds = new ObjectMap<String, Integer>();
 		boneTextures = new Array<BoneTextureData>();
 		
-		root = new Bone();
-		root.position = this.position;
-		root.angleDeg = 0;
+		root = new Bone("root");
+		root.setPosition(position);
+		root.setAngle(0);
 		bones.add(root);
+		
+		boneIds.put(root.getName(), 0);
 	}
 	
-	public int addBone(int parrentBoneIndex, float length, float angle, String boneid) {
-		Bone bone = new Bone();
-		Bone parrent = bones.get(parrentBoneIndex);
-		
-		bone.length = length;
-		bone.angleDeg = angle;
-		bone.parrent = parrent;
-		bone.updatePosition();
-		
-		bones.add(bone);
-		
-		parrent.children.add(bone);
-		
-		if(boneid != null) {
-			boneIds.put(boneid, bones.size - 1);
+	public void addBone(String name, String parentBone, float length, float angle) {
+		//TODO legacy support, remove later
+		Bone parrent = null;
+		if(parentBone == null ) {
+			parrent = root;
+		} else {
+			parrent = bones.get(boneIds.get(parentBone));			
 		}
 		
-		return bones.size -1;
+		Bone bone = new Bone(name, parrent, length, angle);
+		
+		bones.add(bone);
+		boneIds.put(name, bones.size - 1);
+		
+		parrent.children.add(bone);
 	}
 	
-	public Bone getBone(int index) {
-		return bones.get(index);
-	}
-	
-	public void addBoneIdentification(String id, int boneIndex) {
-		//TODO handle case when id is already assigned
-		boneIds.put(id, boneIndex);
+	public Bone getBone(String name) {
+		return bones.get(boneIds.get(name));
 	}
 	
 	public int getBoneIndex(String id) {
@@ -69,7 +63,7 @@ public class Skelet extends GameObject {
 		}
 	}
 	
-	public String getBoneId(int boneIndex) {
+	public String getBoneName(int boneIndex) {
 		return boneIds.findKey(boneIndex, true);
 	}
 	
@@ -104,33 +98,21 @@ public class Skelet extends GameObject {
 	
 	@Override
 	public void move(Vector2 vec) {
-		for(Bone node : bones) {
-			node.position.add(vec);
-		}
+		root.move(vec);
 		
 		updateState();
 	}
 	
 	@Override
 	public void move(float x, float y) {
-		for(Bone node : bones) {
-			node.position.add(x, y);
-		}
+		root.move(x, y);
 		
-		updateState();
-	}
-	
-	public void setPosition(float x, float y, int boneInxed) {
-		Vector2 translation = new Vector2(x,y).sub(bones.get(boneInxed).position);
-		
-		this.position.add(translation);		
 		updateState();
 	}
 	
 	@Override
 	public void setPosition(float x, float y) {	
-		this.position.x = x;
-		this.position.y = y;
+		root.setPosition(x, y);
 		
 		updateState();
 	}
@@ -152,15 +134,14 @@ public class Skelet extends GameObject {
 		node.rotateParrentAround(angle);
 	}
 	
-	public void setBoneAngle(int boneIndex, float angle) {
+	public void setBoneAngle(int boneIndex, float angleDeg) {
 		Bone node = bones.get(boneIndex);
-		node.angleDeg = angle;
-		node.updatePosition();
+		node.setAngle(angleDeg);
 	}
 	
 	public void setPose(Pose pose) {
 		for(int i = 0; i < bones.size; i++) {
-			bones.get(i).angleDeg = pose.angles[i];
+			bones.get(i).setAngleNoUpdate(pose.angles[i]);
 		}
 		
 		updateState();
@@ -168,7 +149,7 @@ public class Skelet extends GameObject {
 	
 	public void getPoseData(Pose pose) {
 		for(int i = 0; i < bones.size; i++) {
-			pose.angles[i] = bones.get(i).angleDeg;
+			pose.angles[i] = bones.get(i).getAngle();
 		}
 	}
 }

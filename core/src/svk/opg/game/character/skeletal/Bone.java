@@ -10,20 +10,39 @@ import com.badlogic.gdx.math.Vector2;
  *
  */
 public class Bone {
-	public Vector2 position;
+	private Vector2 position;
 	
-	public float length = 0.0f;
-	public float angleDeg = 0.0f;
+	private float length = 0.0f;
+	private float angleDeg = 0.0f;
+	private String name = null;
+	
 	public Bone parrent = null;
 	
 	public List<Bone> children;
 	
-	public Bone() {
+	public Bone(String name) {
 		this.position = new Vector2();
+		this.children = new ArrayList<Bone>();
+		
+		this.name = name;
+	}
+	
+	public Bone(String name, Bone parrent, float length, float angleDeg) {
+		this.name = name;
+		this.parrent = parrent;
+		this.length = length;
+		this.angleDeg = angleDeg;
+		
+		if(parrent != null){
+			this.position = new Vector2((float) (parrent.position.x + Math.cos(Math.toRadians(angleDeg)) * length), (float) (parrent.position.y + Math.sin(Math.toRadians(angleDeg)) * length));		
+		} else {
+			this.position = new Vector2();
+		}
+		
 		this.children = new ArrayList<Bone>();
 	}
 	
-	public void updatePosition() {
+	protected void updatePosition() {
 		if(parrent != null){
 			position.x = (float) (parrent.position.x + Math.cos(Math.toRadians(angleDeg)) * length);
 			position.y = (float) (parrent.position.y + Math.sin(Math.toRadians(angleDeg)) * length);				
@@ -94,5 +113,54 @@ public class Bone {
 		}
 		
 		bone.updatePosition();
+	}
+	
+	public void setAngle(float angleDeg) {
+		this.angleDeg = angleDeg;
+		
+		updatePosition();
+	}
+	
+	public void setAngleNoUpdate(float angleDeg) {
+		this.angleDeg = angleDeg;
+	}
+	
+	public void setLength(float length) {
+		this.length = length;
+		
+		updatePosition();
+	}
+	
+	public float getAngle() {
+		return this.angleDeg;
+	}
+
+	public Vector2 getPosition() {
+		return position;
+	}
+	
+	public void move(Vector2 movement) {
+		this.position.add(movement);
+	}
+	
+	public void move(float xa, float ya) {
+		this.position.add(xa, ya);
+	}
+	
+	public void setPosition(Vector2 position) {
+		this.position = position;
+	}
+	
+	public void setPosition(float x, float y) {
+		this.position.x = x;
+		this.position.y = y;
+	}
+
+	public float getLength() {
+		return this.length;
+	}
+
+	public String getName() {
+		return name;
 	}
 }
