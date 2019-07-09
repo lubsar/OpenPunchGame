@@ -80,11 +80,14 @@ public class Skelet extends GameObject {
 		root.updatePosition();
 	}
 	
-	protected void createTextureOrderBuffer() {
+	protected void prepareTextures() {
 		textureOrderBuffer = new int[boneTextures.size];
 		
 		for(int i = 0; i < boneTextures.size; i++) {
-			textureOrderBuffer[boneTextures.get(i).orderIndex] = i;
+			BoneTextureData texture = boneTextures.get(i);
+			
+			textureOrderBuffer[texture.orderIndex] = i;
+			texture.loadTexture();
 		}
 	}
 	

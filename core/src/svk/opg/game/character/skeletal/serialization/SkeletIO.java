@@ -42,7 +42,7 @@ public class SkeletIO {
 		}
 		
 		for(SkeletSerializable.BoneTextureDataSerializable text : serializable.boneTextures) {
-			result.addTexture(new BoneTextureData(text.boneName, new Sprite(new Texture(file.parent().child(text.spritePath))), text.xMappingOffset, text.yMappingOffset, text.orderIndex, text.flip, text.angleOffset));
+			result.addTexture(new BoneTextureData(text.boneName, file.parent().child(text.spritePath), text.xMappingOffset, text.yMappingOffset, text.orderIndex, text.flip, text.angleOffset));
 		}
 		
 		return result;

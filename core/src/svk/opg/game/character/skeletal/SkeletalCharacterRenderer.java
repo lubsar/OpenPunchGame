@@ -42,7 +42,7 @@ public class SkeletalCharacterRenderer {
 	
 	public void renderTextures(Skelet skeleton) {
 		if(skeleton.textureOrderBuffer == null) {
-			skeleton.createTextureOrderBuffer();
+			skeleton.prepareTextures();
 		}
 		
 		batch.begin();

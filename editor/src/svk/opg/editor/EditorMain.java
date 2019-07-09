@@ -6,9 +6,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import javax.swing.JFileChooser;
 import svk.opg.game.character.skeletal.Skelet;
-import svk.opg.game.character.skeletal.serialization.SkeletLegacyIO;
+import svk.opg.game.character.skeletal.SkeletalCharacterRenderer;
+import svk.opg.game.character.skeletal.serialization.SkeletIO;
 
 /**
  *
@@ -17,6 +20,7 @@ import svk.opg.game.character.skeletal.serialization.SkeletLegacyIO;
 public class EditorMain extends javax.swing.JFrame {
 
     private LwjglApplication app;
+    private Skelet skelet;
     
     /**
      * Creates new form EditorMain
@@ -29,8 +33,16 @@ public class EditorMain extends javax.swing.JFrame {
         config.height = 600;
         
         ApplicationListener listener = new ApplicationListener() {
+            private ShapeRenderer shapeRenderer;
+            private SkeletalCharacterRenderer skeletalRenderer;
+            private SpriteBatch batch;
+            
             @Override
             public void create() {
+                batch = new SpriteBatch(10);
+		shapeRenderer  = new ShapeRenderer();
+		skeletalRenderer = new SkeletalCharacterRenderer(shapeRenderer, batch);
+               
                // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
@@ -41,6 +53,10 @@ public class EditorMain extends javax.swing.JFrame {
 
             @Override
             public void render() {
+                if(skelet != null) {
+                    skelet.setPosition(200, 200);
+                    skeletalRenderer.render(skelet);
+                }
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
@@ -163,17 +179,9 @@ public class EditorMain extends javax.swing.JFrame {
         System.out.println(Gdx.graphics.getFramesPerSecond());
         if(status == JFileChooser.APPROVE_OPTION) {
             
-            app.postRunnable(new Runnable() {
-                public void run() {
-                    Skelet skelet = SkeletLegacyIO.deserializeSkelet(app.getFiles().absolute(fileChooser.getSelectedFile().getAbsolutePath()));
-                    System.out.println(skelet.boneIds);//Gdx.files.absolute(fileChooser.getSelectedFile().getPath());
-            
-                    System.out.println(skelet.boneIds);
-                }
-            });
+            skelet = SkeletIO.deserializeSkelet(app.getFiles().absolute(fileChooser.getSelectedFile().getAbsolutePath()));
             
             Gdx.graphics.requestRendering();
-          
         }
     }//GEN-LAST:event_openMenuBttnActionPerformed
 
