@@ -6,6 +6,8 @@ import com.badlogic.gdx.utils.Array;
  * @author Lubomir Hlavko
  *
  */
+
+//TODO merge with Skelet
 public class SkeletalAnimation {
 	public Array<KeyPose> poses;
 	

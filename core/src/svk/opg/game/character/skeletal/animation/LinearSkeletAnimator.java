@@ -6,6 +6,7 @@ import svk.opg.game.character.skeletal.Skelet;
  * @author Lubomir Hlavko
  *
  */
+
 public class LinearSkeletAnimator {
 	public Skelet skeleton;
 	private SkeletalAnimation animation;

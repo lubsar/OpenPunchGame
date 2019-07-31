@@ -11,6 +11,7 @@ import svk.opg.game.character.skeletal.animation.SkeletalAnimation;
  * @author Lubomir Hlavko
  *
  */
+
 public class SkeletAnimationIO {
 	public static void serializeAnimation(FileHandle file, SkeletalAnimation animation) {
 		SkeletalAnimationSerializable toSerialize = new SkeletalAnimationSerializable(animation);

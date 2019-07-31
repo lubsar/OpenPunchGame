@@ -116,51 +116,61 @@ public class Bone {
 	}
 	
 	public void setAngle(float angleDeg) {
-		this.angleDeg = angleDeg;
-		
-		updatePosition();
+            this.angleDeg = angleDeg;
+	
+            updatePosition();
 	}
 	
 	public void setAngleNoUpdate(float angleDeg) {
-		this.angleDeg = angleDeg;
+            this.angleDeg = angleDeg;
 	}
 	
 	public void setLength(float length) {
-		this.length = length;
+            this.length = length;
 		
-		updatePosition();
+            updatePosition();
 	}
 	
 	public float getAngle() {
-		return this.angleDeg;
+            return this.angleDeg;
 	}
 
 	public Vector2 getPosition() {
-		return position;
+            return position;
 	}
 	
 	public void move(Vector2 movement) {
-		this.position.add(movement);
+            this.position.add(movement);
 	}
 	
 	public void move(float xa, float ya) {
-		this.position.add(xa, ya);
+            this.position.add(xa, ya);
 	}
 	
 	public void setPosition(Vector2 position) {
-		this.position = position;
+            this.position = position;
 	}
 	
 	public void setPosition(float x, float y) {
-		this.position.x = x;
-		this.position.y = y;
+            this.position.x = x;
+            this.position.y = y;
 	}
 
 	public float getLength() {
-		return this.length;
+            return this.length;
 	}
 
 	public String getName() {
-		return name;
+            return name;
 	}
+        
+        //TODO editor only
+        public void setName(String name) {
+            this.name = name;
+        }
+        
+        @Override
+        public String toString() {
+            return this.name;
+        }
 }

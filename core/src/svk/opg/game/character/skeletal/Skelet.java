@@ -10,8 +10,10 @@ import svk.opg.game.object.GameObject;
  * @author Lubomir Hlavko
  */
 public class Skelet extends GameObject {
+        public static final String ROOT_BONE_NAME = "root";
+    
 	private Bone root;
-	
+        
 	//TODO change to standard arrays ?
 	public Array<Bone> bones;	
 	private ObjectMap<String, Integer> boneIds;
@@ -26,7 +28,7 @@ public class Skelet extends GameObject {
 		boneIds = new ObjectMap<String, Integer>();
 		boneTextures = new Array<BoneTextureData>();
 		
-		root = new Bone("root");
+		root = new Bone(ROOT_BONE_NAME);
 		root.setPosition(position);
 		root.setAngle(0);
 		bones.add(root);
@@ -34,7 +36,7 @@ public class Skelet extends GameObject {
 		boneIds.put(root.getName(), 0);
 	}
 	
-	public void addBone(String name, String parentBone, float length, float angle) {
+	public Bone addBone(String name, String parentBone, float length, float angle) {
 		//TODO legacy support, remove later
 		Bone parrent = null;
 		if(parentBone == null ) {
@@ -49,7 +51,37 @@ public class Skelet extends GameObject {
 		boneIds.put(name, bones.size - 1);
 		
 		parrent.children.add(bone);
+                
+                return bone;
 	}
+        
+        private void removeTree(Bone bone) {
+            bones.removeValue(bone, false);
+            boneIds.remove(bone.getName());
+            
+            for(Bone child : bone.children) {
+                removeTree(child);
+            }
+        }
+        
+        public void removeBone(String name) {
+            if(name.equals(Skelet.ROOT_BONE_NAME)) {
+                return;
+            }
+   
+            Bone toRemove = getBone(name);
+            
+            //remove bone from parrent children
+            toRemove.parrent.children.remove(toRemove);
+            
+            //remove bone and its ancestors
+            removeTree(toRemove);
+            
+            //fix indices
+            for(int i = 0; i < bones.size; i++) {
+            	boneIds.put(bones.get(i).getName(), i);
+            }
+        }
 	
 	public Bone getBone(String name) {
 		return bones.get(boneIds.get(name));

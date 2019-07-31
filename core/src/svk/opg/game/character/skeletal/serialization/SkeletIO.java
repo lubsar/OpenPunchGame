@@ -23,7 +23,10 @@ public class SkeletIO {
 		
 		file.writeString(js.prettyPrint(toSerialize), false);
 		
+                //TODO sprite must be loaded
 		for(int i = 0; i < toSerialize.boneTextures.size; i++) {
+                        System.out.println(skeleton.boneTextures.get(i));
+                        
 			TextureData imageData = skeleton.boneTextures.get(i).sprite.getTexture().getTextureData();
 			imageData.prepare();
 			

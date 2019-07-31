@@ -1,14 +1,15 @@
 package svk.opg.editor;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import svk.opg.editor.treeeditor.TreeViewHandler;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import javax.swing.JFileChooser;
+import svk.opg.game.character.skeletal.Bone;
+import svk.opg.game.character.skeletal.BoneTextureData;
 import svk.opg.game.character.skeletal.Skelet;
 import svk.opg.game.character.skeletal.SkeletalCharacterRenderer;
 import svk.opg.game.character.skeletal.serialization.SkeletIO;
@@ -18,15 +19,20 @@ import svk.opg.game.character.skeletal.serialization.SkeletIO;
  * @author Lubomir Hlavko
  */
 public class EditorMain extends javax.swing.JFrame {
-
-    private LwjglApplication app;
-    private Skelet skelet;
+    private final LwjglApplication app;
+    private final TreeViewHandler treeHandler;
+    
+    private Skelet skelet = new Skelet();
     
     /**
      * Creates new form EditorMain
      */
     public EditorMain() {
         initComponents();
+        treeHandler = new TreeViewHandler(skeletonTree, this);
+        
+        //TODO remove, testing
+        treeHandler.setSkelet(skelet);
         
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.width = 800;
@@ -42,8 +48,6 @@ public class EditorMain extends javax.swing.JFrame {
                 batch = new SpriteBatch(10);
 		shapeRenderer  = new ShapeRenderer();
 		skeletalRenderer = new SkeletalCharacterRenderer(shapeRenderer, batch);
-               
-               // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override
@@ -57,6 +61,7 @@ public class EditorMain extends javax.swing.JFrame {
                     skelet.setPosition(200, 200);
                     skeletalRenderer.render(skelet);
                 }
+   
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
@@ -76,11 +81,45 @@ public class EditorMain extends javax.swing.JFrame {
             }
         };
         
-         app = new LwjglApplication(listener, config, editorCanvas );
-         
+        app = new LwjglApplication(listener, config, editorCanvas );
+        //input events still trigger rendering
         Gdx.graphics.setContinuousRendering(false);
     }
-
+    
+    public void addBone(String name, String parentBone, float length, float angleDeg) {
+        Bone newBone = skelet.addBone(name, parentBone, length, angleDeg);
+        treeHandler.addNode(newBone);
+    }
+    
+    public void removeBone(String name) {
+        skelet.removeBone(name);
+        treeHandler.removeNode(name);
+        
+        //System.out.println(skelet.bones);
+    }
+    
+    public void renameBone(Bone bone, String newName) {
+        bone.setName(newName);
+        
+        treeHandler.updateNodeText(bone);
+    }
+    
+    public void showNewBoneDialog(NewBoneDialog.NewBoneDialogHandler handler) {
+         NewBoneDialog dialog = new NewBoneDialog(this, true, handler);
+         
+         dialog.setLocationRelativeTo(null);
+         
+         dialog.setVisible(true);
+    }
+    
+    public void showRenameBoneDialog(RenameBoneDialog.RenameBoneDialogHandler handler) {
+        RenameBoneDialog dialog = new RenameBoneDialog(this, true, handler);
+         
+         dialog.setLocationRelativeTo(null);
+         
+         dialog.setVisible(true);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -123,7 +162,11 @@ public class EditorMain extends javax.swing.JFrame {
 
         treeEditorPane.setRightComponent(editorPropertiesPane);
 
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        skeletonTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         skeletonTree.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        skeletonTree.setEditable(true);
+        skeletonTree.setRowHeight(0);
         skeletonTreePane.setViewportView(skeletonTree);
 
         treeEditorPane.setLeftComponent(skeletonTreePane);
@@ -147,6 +190,11 @@ public class EditorMain extends javax.swing.JFrame {
         saveMenuBttn.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         saveMenuBttn.setText("Save");
         saveMenuBttn.setToolTipText("");
+        saveMenuBttn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveMenuBttnActionPerformed(evt);
+            }
+        });
         fileMenu.add(saveMenuBttn);
         fileMenu.add(exitSeparator);
 
@@ -176,15 +224,24 @@ public class EditorMain extends javax.swing.JFrame {
 
     private void openMenuBttnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuBttnActionPerformed
         int status = fileChooser.showOpenDialog(this);
-        System.out.println(Gdx.graphics.getFramesPerSecond());
         if(status == JFileChooser.APPROVE_OPTION) {
             
             skelet = SkeletIO.deserializeSkelet(app.getFiles().absolute(fileChooser.getSelectedFile().getAbsolutePath()));
+           
+            //TODO loading progress bar
+            treeHandler.setSkelet(skelet);
             
             Gdx.graphics.requestRendering();
         }
     }//GEN-LAST:event_openMenuBttnActionPerformed
 
+    private void saveMenuBttnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuBttnActionPerformed
+        int status = fileChooser.showSaveDialog(this);
+        if(status == JFileChooser.APPROVE_OPTION) {
+            SkeletIO.serializeSkelet(app.getFiles().absolute(fileChooser.getSelectedFile().getAbsolutePath()), skelet);
+        }
+    }//GEN-LAST:event_saveMenuBttnActionPerformed
+    
     /**
      * @param args the command line arguments
      */
