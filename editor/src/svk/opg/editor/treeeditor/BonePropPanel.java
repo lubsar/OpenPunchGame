@@ -21,6 +21,18 @@ public class BonePropPanel extends javax.swing.JPanel {
         fieldLength.setText(Float.toString(length));
         fieldAngle.setText(Float.toString(angle));
     }
+    
+    public String getBoneName() {
+        return labelTitle.getText();
+    }
+    
+    public float getLength() {
+        return Float.parseFloat(fieldLength.getText());
+    }
+    
+    public float getAngle() {
+        return Float.parseFloat(fieldAngle.getText());
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -37,49 +49,60 @@ public class BonePropPanel extends javax.swing.JPanel {
         fieldAngle = new javax.swing.JFormattedTextField();
         labelTitle = new javax.swing.JLabel();
 
+        setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(2, 1, 2, 1), new javax.swing.border.LineBorder(new java.awt.Color(119, 119, 119), 1, true)));
         setMinimumSize(new java.awt.Dimension(70, 60));
 
+        labelLength.setLabelFor(fieldLength);
         labelLength.setText("length");
 
+        labelAngle.setLabelFor(fieldAngle);
         labelAngle.setText("angle");
 
+        fieldLength.setBorder(null);
+        fieldLength.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
         fieldLength.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fieldLengthActionPerformed(evt);
             }
         });
 
+        fieldAngle.setBorder(null);
+        fieldAngle.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
         fieldAngle.setMinimumSize(new java.awt.Dimension(6, 32));
+
+        labelTitle.setBackground(new java.awt.Color(204, 204, 204));
+        labelTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelTitle.setOpaque(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(labelTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelAngle)
-                            .addComponent(labelLength))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fieldLength, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(fieldAngle, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(labelAngle)
+                    .addComponent(labelLength))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(fieldLength, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fieldAngle, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(8, Short.MAX_VALUE))
+            .addComponent(labelTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(labelTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
+                .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelLength)
                     .addComponent(fieldLength, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelAngle)
-                    .addComponent(fieldAngle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(fieldAngle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(1, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -93,6 +116,6 @@ public class BonePropPanel extends javax.swing.JPanel {
     private javax.swing.JFormattedTextField fieldLength;
     private javax.swing.JLabel labelAngle;
     private javax.swing.JLabel labelLength;
-    private javax.swing.JLabel labelTitle;
+    public javax.swing.JLabel labelTitle;
     // End of variables declaration//GEN-END:variables
 }

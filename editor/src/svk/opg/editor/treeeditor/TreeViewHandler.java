@@ -1,5 +1,6 @@
 package svk.opg.editor.treeeditor;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -35,8 +36,6 @@ import javax.swing.tree.TreeCellEditor;
  * @author Lubomir Hlavko
  */
 public class TreeViewHandler {
-    private boolean showBonePropertyEditor;
-    
     private EditorMain editor;
     
     private JTree tree;
@@ -59,6 +58,7 @@ public class TreeViewHandler {
          tree.setModel(model);
          
          tree.setCellRenderer(new BoneNodeRenderer());
+         tree.setCellEditor(new BoneNodeTreeCellEditor());
     }
     
     private void addChildNodes(DefaultMutableTreeNode node, Bone bone) {
@@ -111,20 +111,59 @@ public class TreeViewHandler {
     
     private class BoneNodeRenderer implements TreeCellRenderer {
         private DefaultTreeCellRenderer defaultRenderer;
-        private BonePropPanel bpp;
+        
+        private JPanel component;
+        private JLabel label;
+        
         
         public BoneNodeRenderer() {
             defaultRenderer = new DefaultTreeCellRenderer();
-            bpp = new BonePropPanel();
+            
+            component = new JPanel(new BorderLayout());
+            label = new JLabel();
+            
+            label.setBackground(new Color(204, 204, 204));
+            label.setPreferredSize(new Dimension(90, 16));
+            label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            label.setOpaque(true);
+            
+            component.add(label, BorderLayout.CENTER);
+            component.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1), new javax.swing.border.LineBorder(new java.awt.Color(119, 119, 119), 1, true)));
         }
         
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-             Bone bone = (Bone) ((DefaultMutableTreeNode) value).getUserObject();
+            Bone bone = (Bone) ((DefaultMutableTreeNode) value).getUserObject();
             
-            bpp.setValues(bone.getName(), bone.getLength(), bone.getAngle());
-            return bpp;
+            label.setText(bone.getName());
+            return component;
         }
+    }
+    
+    private class BoneNodeTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
+        private BonePropPanel bpp;
+        private Bone current;
+        
+        public BoneNodeTreeCellEditor() {
+            bpp = new BonePropPanel();
+        }
+        
+        @Override
+        public Object getCellEditorValue() {
+           current.setAngle(bpp.getAngle());
+           current.setLength(bpp.getLength());
+           
+           return current;
+        }
+
+        @Override
+        public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
+            current = (Bone) ((DefaultMutableTreeNode) value).getUserObject();
+            
+            bpp.setValues(current.getName(), current.getLength(), current.getAngle());
+            
+            return bpp;
+        }   
     }
     
     private class MouseHandler extends MouseAdapter {
